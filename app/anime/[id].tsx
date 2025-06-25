@@ -1,9 +1,9 @@
 import { useLocalSearchParams } from 'expo-router';
-import { View, Text, ScrollView, Image, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { View, Text, ScrollView, Image, ActivityIndicator } from 'react-native';
 import tw from 'twrnc';
 import { useAnimeApi } from '../hooks/useAnimeApi';
 import { useDatabase } from '../hooks/useDatabase';
-import { EpisodeList } from '../components/EpisodeList';
+import { EpisodeList } from '.././components/EpisodeList';
 
 export default function AnimeDetailsScreen() {
     const { id } = useLocalSearchParams();
@@ -39,15 +39,6 @@ export default function AnimeDetailsScreen() {
                     <Text style={tw`text-gray-600`}>{anime.attributes.episodeCount} épisodes</Text>
                     <Text style={tw`text-gray-600`}>Note: {anime.attributes.averageRating}/100</Text>
                     <Text style={tw`text-gray-600`}>Statut: {anime.attributes.status}</Text>
-
-                    <TouchableOpacity
-                        style={tw`mt-4 bg-blue-500 py-2 px-4 rounded-lg`}
-                        onPress={() => addToCollection(anime)}
-                    >
-                        <Text style={tw`text-white text-center`}>
-                            {isInCollection(anime.id) ? 'Dans ma collection' : 'Ajouter à ma collection'}
-                        </Text>
-                    </TouchableOpacity>
                 </View>
             </View>
 

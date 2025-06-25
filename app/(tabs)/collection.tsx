@@ -35,9 +35,6 @@ export default function CollectionScreen() {
         <View style={tw`flex-1 p-4 bg-gray-100`}>
             <View style={tw`flex-row justify-between items-center mb-4`}>
                 <Text style={tw`text-2xl font-bold`}>Ma Collection</Text>
-                <TouchableOpacity onPress={logout} style={tw`p-2`}>
-                    <Text style={tw`text-red-500`}>Déconnexion</Text>
-                </TouchableOpacity>
             </View>
 
             {loading && collection.length === 0 ? (

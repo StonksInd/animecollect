@@ -1,7 +1,7 @@
 import { View, Text, Image, TouchableOpacity } from 'react-native';
 import tw from 'twrnc';
 
-export const AnimeCard = ({ anime, onPress, actions = [] }) => {
+export const AnimeCard = ({ anime, onPress }) => {
     return (
         <View style={tw`bg-white rounded-lg shadow-md overflow-hidden mb-4`}>
             <TouchableOpacity onPress={onPress}>
@@ -23,19 +23,7 @@ export const AnimeCard = ({ anime, onPress, actions = [] }) => {
                 </View>
             </TouchableOpacity>
 
-            {actions.length > 0 && (
-                <View style={tw`flex-row border-t border-gray-100`}>
-                    {actions.map((action, index) => (
-                        <TouchableOpacity
-                            key={index}
-                            style={tw`flex-1 py-2 ${index !== actions.length - 1 ? 'border-r border-gray-100' : ''}`}
-                            onPress={action.onPress}
-                        >
-                            <Text style={tw`text-center text-blue-500`}>{action.label}</Text>
-                        </TouchableOpacity>
-                    ))}
-                </View>
-            )}
+
         </View>
     );
 };

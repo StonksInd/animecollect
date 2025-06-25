@@ -60,16 +60,6 @@ export default function NewReleasesScreen() {
                         <AnimeCard
                             anime={item}
                             onPress={() => navigation.navigate('anime-details', { id: item.id })}
-                            actions={[
-                                {
-                                    label: 'Ajouter à ma collection',
-                                    onPress: () => handleAddToCollection(item)
-                                },
-                                {
-                                    label: 'Marquer comme vu',
-                                    onPress: () => handleMarkAsWatched(item.id, item.relationships.episodes.data[0].id)
-                                }
-                            ]}
                         />
                     )}
                     refreshControl={
