@@ -1,27 +1,25 @@
-// db/schema.ts
-import { sqliteTable, text, integer, blob } from 'drizzle-orm/sqlite-core';
+import { sqliteTable, text, integer } from 'drizzle-orm/sqlite-core';
+
+export const users = sqliteTable('users', {
+  id: text('id').primaryKey(),
+  email: text('email').notNull().unique(),
+  password: text('password').notNull(), // En production, utilisez bcrypt !
+  username: text('username').notNull(),
+  createdAt: text('created_at').default('CURRENT_TIMESTAMP'),
+});
 
 export const anime = sqliteTable('anime', {
-  id: integer('id').primaryKey(),
+  id: text('id').primaryKey(),
   title: text('title').notNull(),
   posterImage: text('poster_image'),
   episodeCount: integer('episode_count'),
-  // autres champs...
+  createdAt: text('created_at').default('CURRENT_TIMESTAMP'),
 });
 
 export const episodes = sqliteTable('episodes', {
-  id: integer('id').primaryKey(),
-  animeId: integer('anime_id').references(() => anime.id),
+  id: text('id').primaryKey(),
+  animeId: text('anime_id').references(() => anime.id),
   number: integer('number').notNull(),
   title: text('title'),
   watched: integer('watched', { mode: 'boolean' }).default(false),
-  // autres champs...
 });
-
-// Configuration de Drizzle
-// db/index.ts
-import { drizzle } from 'drizzle-orm/expo-sqlite';
-import { openDatabaseSync } from 'expo-sqlite/next';
-
-const expoDb = openDatabaseSync('animecollect.db');
-export const db = drizzle(expoDb);

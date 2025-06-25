@@ -19,7 +19,8 @@
     "expo-sqlite": "^15.2.12",
     "react": "18.2.0",
     "react-native": "0.73.4",
-    "twrnc": "^3.6.8"
+    "twrnc": "^3.6.8",
+    "expo-secure-store": "~14.0.1"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

@@ -1,8 +1,8 @@
 import { useLocalSearchParams } from 'expo-router';
-import { View, Text, Image, TouchableOpacity } from 'react-native';
+import { View, Text, Image, TouchableOpacity, ActivityIndicator } from 'react-native';
 import tw from 'twrnc';
-import { useAnimeApi } from '../../../../hooks/useAnimeApi';
-import { useDatabase } from '../../../../hooks/useDatabase';
+import { useAnimeApi } from '../../hooks/useAnimeApi';
+import { useDatabase } from '../../hooks/useDatabase';
 
 export default function EpisodeDetailsScreen() {
     const { id, episode } = useLocalSearchParams();

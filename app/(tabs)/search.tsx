@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { View, Text, TextInput, FlatList, ActivityIndicator } from 'react-native';
 import tw from 'twrnc';
-import { useAnimeApi } from '../../hooks/useAnimeApi';
-import { AnimeCard } from '../../components/AnimeCard';
+import { useAnimeApi } from '../hooks/useAnimeApi';
+import { AnimeCard } from '../components/AnimeCard';
 
 export default function SearchScreen() {
     const [query, setQuery] = useState('');

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { db } from '../db';
 import { anime, episodes } from '../db/schema';
 import { eq } from 'drizzle-orm';
+import { fetchEpisodesByAnimeId } from '../services/apiService';
 
 export const useDatabase = () => {
   const [collection, setCollection] = useState([]);
@@ -39,16 +40,26 @@ export const useDatabase = () => {
 
   const addToCollection = async (animeData) => {
     try {
+      // Vérifier si l'anime existe déjà
+      const existing = await db.select()
+        .from(anime)
+        .where(eq(anime.id, animeData.id))
+        .get();
+      
+      if (existing) {
+        console.log('Anime already in collection');
+        return;
+      }
+
       await db.insert(anime).values({
         id: animeData.id,
         title: animeData.attributes.canonicalTitle,
         posterImage: animeData.attributes.posterImage?.medium,
         episodeCount: animeData.attributes.episodeCount,
-        // autres champs...
       }).run();
       
-      // Ajouter les épisodes
-      const episodesData = await fetchEpisodes(animeData.id); // Implémentez cette fonction
+      // Ajouter les épisodes depuis l'API
+      const episodesData = await fetchEpisodesByAnimeId(animeData.id);
       for (const ep of episodesData) {
         await db.insert(episodes).values({
           id: ep.id,
@@ -62,6 +73,7 @@ export const useDatabase = () => {
       await loadCollection();
     } catch (err) {
       setError(err.message);
+      console.error('Error adding to collection:', err);
     }
   };
 
@@ -84,6 +96,10 @@ export const useDatabase = () => {
     }
   };
 
+  const markAsWatched = async (animeId, episodeId) => {
+    return toggleWatched(animeId, episodeId);
+  };
+
   const isInCollection = (animeId) => {
     return collection.some(item => item.anime.id === animeId);
   };
@@ -100,7 +116,8 @@ export const useDatabase = () => {
     loading, 
     error, 
     addToCollection, 
-    toggleWatched, 
+    toggleWatched,
+    markAsWatched,
     isInCollection, 
     isWatched,
     refresh: loadCollection

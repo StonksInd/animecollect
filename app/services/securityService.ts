@@ -1,4 +1,4 @@
-import { sanitizeInput } from './validators';
+import { sanitizeInput } from '../../validators';
 
 export const secureFetch = async (url, options = {}) => {
   // Valider l'URL

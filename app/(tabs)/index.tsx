@@ -1,10 +1,19 @@
-import { useAnimeApi } from '../../hooks/useAnimeApi';
-import { AnimeCard } from '../../components/AnimeCard';
+import { useAnimeApi } from '../hooks/useAnimeApi';
+import { AnimeCard } from '../components/AnimeCard';
 import { View, Text, FlatList, ActivityIndicator, RefreshControl } from 'react-native';
 import tw from 'twrnc';
-import { useDatabase } from '../../hooks/useDatabase';
+import { useDatabase } from '../hooks/useDatabase';
+import { useNavigation } from '@react-navigation/native';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+
+// Define your stack param list
+type RootStackParamList = {
+    'anime-details': { id: string };
+    // add other routes here if needed
+};
 
 export default function NewReleasesScreen() {
+    const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
     const { trendingAnime, loading, error, refresh } = useAnimeApi();
     const { addToCollection, markAsWatched } = useDatabase();
 
@@ -26,6 +35,17 @@ export default function NewReleasesScreen() {
         );
     }
 
+    // Define the type for an Anime item (adjust fields as needed)
+    type Anime = {
+        id: string;
+        relationships: {
+            episodes: {
+                data: { id: string }[];
+            };
+        };
+        // add other fields if needed
+    };
+
     return (
         <View style={tw`flex-1 p-4 bg-gray-100`}>
             <Text style={tw`text-2xl font-bold mb-4`}>Nouveautés</Text>
@@ -33,7 +53,7 @@ export default function NewReleasesScreen() {
             {loading && trendingAnime.length === 0 ? (
                 <ActivityIndicator size="large" style={tw`mt-8`} />
             ) : (
-                <FlatList
+                <FlatList<Anime>
                     data={trendingAnime}
                     keyExtractor={(item) => item.id}
                     renderItem={({ item }) => (
