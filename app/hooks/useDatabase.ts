@@ -12,13 +12,12 @@ export const useDatabase = () => {
   const loadCollection = async () => {
     try {
       setLoading(true);
-      const result = await db.select().from(anime).all();
+      const result = await db.select().from(anime);
       const collectionWithEpisodes = await Promise.all(
         result.map(async (animeItem) => {
           const eps = await db.select()
             .from(episodes)
-            .where(eq(episodes.animeId, animeItem.id))
-            .all();
+            .where(eq(episodes.animeId, animeItem.id));
           return {
             anime: animeItem,
             episodes: eps,
@@ -41,12 +40,12 @@ export const useDatabase = () => {
   const addToCollection = async (animeData) => {
     try {
       // Vérifier si l'anime existe déjà
-      const existing = await db.select()
+      const existingResult = await db.select()
         .from(anime)
         .where(eq(anime.id, animeData.id))
-        .get();
+        .limit(1);
       
-      if (existing) {
+      if (existingResult.length > 0) {
         console.log('Anime already in collection');
         return;
       }
@@ -56,7 +55,7 @@ export const useDatabase = () => {
         title: animeData.attributes.canonicalTitle,
         posterImage: animeData.attributes.posterImage?.medium,
         episodeCount: animeData.attributes.episodeCount,
-      }).run();
+      });
       
       // Ajouter les épisodes depuis l'API
       const episodesData = await fetchEpisodesByAnimeId(animeData.id);
@@ -67,7 +66,7 @@ export const useDatabase = () => {
           number: ep.attributes.number,
           title: ep.attributes.canonicalTitle,
           watched: false,
-        }).run();
+        });
       }
       
       await loadCollection();
@@ -79,16 +78,17 @@ export const useDatabase = () => {
 
   const toggleWatched = async (animeId, episodeId) => {
     try {
-      const episode = await db.select()
+      const episodeResult = await db.select()
         .from(episodes)
         .where(eq(episodes.id, episodeId))
-        .get();
+        .limit(1);
+      
+      const episode = episodeResult[0];
       
       if (episode) {
         await db.update(episodes)
           .set({ watched: !episode.watched })
-          .where(eq(episodes.id, episodeId))
-          .run();
+          .where(eq(episodes.id, episodeId));
         await loadCollection();
       }
     } catch (err) {

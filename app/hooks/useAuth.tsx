@@ -1,4 +1,4 @@
-import React, { useState, useEffect, createContext, useContext } from 'react';
+import React, { useState, useEffect, createContext, useContext, ReactNode } from 'react';
 import { db } from '../db';
 import { users } from '../db/schema';
 import { eq } from 'drizzle-orm';
@@ -28,8 +28,6 @@ export const useAuth = () => {
   return context;
 };
 
-import { ReactNode } from 'react';
-
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
@@ -42,10 +40,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     try {
       const userId = await SecureStore.getItemAsync('userId');
       if (userId) {
-        const userData = await db.select()
+        // Correction : utilisation correcte de Drizzle ORM
+        const result = await db.select()
           .from(users)
           .where(eq(users.id, userId))
-          .get();
+          .limit(1);
+
+        const userData = result[0]; // Récupérer le premier élément
+
         if (userData) {
           setUser({
             id: userData.id,
@@ -63,10 +65,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const login = async (email: string, password: string) => {
     try {
-      const userData = await db.select()
+      // Correction : utilisation correcte de Drizzle ORM
+      const result = await db.select()
         .from(users)
         .where(eq(users.email, email))
-        .get();
+        .limit(1);
+
+      const userData = result[0]; // Récupérer le premier élément
 
       if (!userData || userData.password !== password) {
         throw new Error('Email ou mot de passe incorrect');
@@ -86,24 +91,24 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const register = async (email: string, password: string, username: string) => {
     try {
       // Vérifier si l'utilisateur existe déjà
-      const existingUser = await db.select()
+      const existingResult = await db.select()
         .from(users)
         .where(eq(users.email, email))
-        .get();
+        .limit(1);
 
-      if (existingUser) {
+      if (existingResult.length > 0) {
         throw new Error('Cet email est déjà utilisé');
       }
 
       const userId = Date.now().toString();
-      
+
       await db.insert(users).values({
         id: userId,
         email,
         password, // En production, utilisez un hash !
         username,
         createdAt: new Date().toISOString()
-      }).run();
+      });
 
       await SecureStore.setItemAsync('userId', userId);
       setUser({ id: userId, email, username });

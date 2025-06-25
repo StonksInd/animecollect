@@ -1,5 +1,5 @@
 import { useLocalSearchParams } from 'expo-router';
-import { View, Text, ScrollView, Image, TouchableOpacity } from 'react-native';
+import { View, Text, ScrollView, Image, TouchableOpacity, ActivityIndicator } from 'react-native';
 import tw from 'twrnc';
 import { useAnimeApi } from '../hooks/useAnimeApi';
 import { useDatabase } from '../hooks/useDatabase';
@@ -7,7 +7,7 @@ import { EpisodeList } from '../components/EpisodeList';
 
 export default function AnimeDetailsScreen() {
     const { id } = useLocalSearchParams();
-    const { anime, loading, error } = useAnimeApi(id);
+    const { anime, loading, error } = useAnimeApi(id as string);
     const { isInCollection, addToCollection } = useDatabase();
 
     if (loading) {
@@ -18,10 +18,10 @@ export default function AnimeDetailsScreen() {
         );
     }
 
-    if (error) {
+    if (error || !anime) {
         return (
             <View style={tw`flex-1 justify-center items-center`}>
-                <Text style={tw`text-red-500`}>{error}</Text>
+                <Text style={tw`text-red-500`}>{error || 'Anime non trouvé'}</Text>
             </View>
         );
     }

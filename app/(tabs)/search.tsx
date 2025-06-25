@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { View, Text, TextInput, FlatList, ActivityIndicator } from 'react-native';
+import { router } from 'expo-router';
 import tw from 'twrnc';
 import { useAnimeApi } from '../hooks/useAnimeApi';
 import { AnimeCard } from '../components/AnimeCard';
@@ -39,7 +40,7 @@ export default function SearchScreen() {
                     renderItem={({ item }) => (
                         <AnimeCard
                             anime={item}
-                            onPress={() => navigation.navigate('anime-details', { id: item.id })}
+                            onPress={() => router.push(`/anime/${item.id}`)}
                         />
                     )}
                 />
